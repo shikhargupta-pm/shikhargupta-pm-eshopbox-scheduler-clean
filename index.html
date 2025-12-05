@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eshopbox Meeting Scheduler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-red: #F95253;
+            --brand-dark: #1D1D1D;
+            --brand-white: #FFFFFF;
+            --brand-blue: #2491F1;
+            --brand-green: #3EB557;
+            --text-gray: #4A4A4A;
+            --border-gray: #E2E8F0;
+            --background-light: #F7FAFC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--background-light);
+            color: var(--brand-dark);
+        }
+
+        .header {
+            background: var(--brand-white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 0;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: calc(100vh - 140px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .left-column {
+            padding: 40px;
+            overflow-y: auto;
+            background: var(--brand-white);
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--brand-dark);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .form-section {
+            background: var(--background-light);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-gray);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--brand-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--brand-red);
+            box-shadow: 0 0 0 3px rgba(249, 82, 83, 0.1);
+        }
+
+        .card-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .card-group input[type="radio"] {
+            display: none;
+        }
+
+        .card-label {
+            display: block;
+            padding: 20px;
+            background: var(--brand-white);
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-label:hover {
+            border-color: var(--brand-red);
+            background: #FFF5F5;
+            transform: translateY(-2px);
+        }
+
+        .card-group input[type="radio"]:checked+.card-label {
+            border-color: var(--brand-red);
+            background: #FFF5F5;
+            box-shadow: 0 0 0 3px rgba(249, 82, 83, 0.1);
+        }
+
+        .card-group input[type="radio"]:checked+.card-label::before {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--brand-red);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--brand-dark);
+        }
+
+        .section-label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--brand-dark);
+            margin-bottom: 12px;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: var(--text-gray);
+            line-height: 1.5;
+            margin: 16px 0;
+            padding: 12px;
+            background: var(--background-light);
+            border-radius: 8px;
+            border-left: 3px solid var(--brand-red);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--brand-red);
+            color: var(--brand-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #e64444;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .right-column {
+            padding: 40px;
+            background: var(--background-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .result-card {
+            width: 100%;
+            max-width: 500px;
+            background: var(--brand-white);
+            padding: 32px;
+            border-radius: 16px;
+            border: 2px solid var(--brand-green);
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--brand-green);
+            color: var(--brand-white);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .result-card h2 {
+            font-size: 24px;
+            color: var(--brand-dark);
+            margin-bottom: 12px;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+
+        .ae-info {
+            background: var(--background-light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ae-info h3 {
+            font-size: 20px;
+            color: var(--brand-dark);
+            margin-bottom: 6px;
+        }
+
+        .ae-info p {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .book-btn {
+            display: inline-block;
+            padding: 14px 40px;
+            background: var(--brand-blue);
+            color: var(--brand-white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .book-btn:hover {
+            background: #1a7ac8;
+            transform: translateY(-1px);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-light-gray);
+            font-size: 15px;
+        }
+
+        .footer {
+            background: var(--brand-dark);
+            color: var(--brand-white);
+            padding: 16px 40px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal:not(.hidden) {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--brand-white);
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            color: var(--brand-dark);
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-btn {
+            background: var(--brand-green);
+            color: var(--brand-white);
+        }
+
+        .confirm-btn:hover {
+            background: #2a9b45;
+            transform: translateY(-1px);
+        }
+
+        .cancel-btn {
+            background: var(--brand-white);
+            color: var(--brand-red);
+            border: 2px solid var(--brand-red);
+        }
+
+        .cancel-btn:hover {
+            background: var(--brand-red);
+            color: var(--brand-white);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h1 style="color: #F95253; font-size: 24px;">Eshopbox</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="left-column">
+                <div class="form-container">
+                    <h1>Eshopbox Experts - Demo Scheduler</h1>
+                    <p class="subtitle">Qualify a prospect and route them to the right expert based on availability,
+                        volume and service.</p>
+
+                    <form id="scheduleForm">
+                        <div class="form-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="date">Preferred date</label>
+                                    <input type="date" id="date" name="date" required class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="time_slot">Time slot (1 hour)</label>
+                                    <select id="time_slot" name="time_slot" required class="form-input">
+                                        <option value="" disabled selected>Select time slot</option>
+                                        <option value="10:30">10:30 - 11:30</option>
+                                        <option value="11:30">11:30 - 12:30</option>
+                                        <option value="12:30">12:30 - 13:30</option>
+                                        <option value="13:30">13:30 - 14:30</option>
+                                        <option value="14:30">14:30 - 15:30</option>
+                                        <option value="15:30">15:30 - 16:30</option>
+                                        <option value="16:30">16:30 - 17:30</option>
+                                        <option value="17:30">17:30 - 18:30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <label class="section-label">Monthly order volume</label>
+                            <div class="card-group">
+                                <input type="radio" id="volume_low" name="volume" value="1000" required>
+                                <label for="volume_low" class="card-label">
+                                    <span class="card-title">
+                                        < 3,000 orders</span>
+                                </label>
+                                <input type="radio" id="volume_high" name="volume" value="5000">
+                                <label for="volume_high" class="card-label">
+                                    <span class="card-title">≥ 3,000 orders</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <label class="section-label">Service</label>
+                            <div class="card-group">
+                                <input type="radio" id="service_ship" name="service" value="Ship" required>
+                                <label for="service_ship" class="card-label"><span
+                                        class="card-title">Ship</span></label>
+                                <input type="radio" id="service_fulfil" name="service" value="Fulfil">
+                                <label for="service_fulfil" class="card-label"><span
+                                        class="card-title">Fulfil</span></label>
+                                <input type="radio" id="service_both" name="service" value="Both">
+                                <label for="service_both" class="card-label"><span
+                                        class="card-title">Both</span></label>
+                                <input type="radio" id="service_plus" name="service" value="Eshopbox Plus">
+                                <label for="service_plus" class="card-label"><span class="card-title">Eshopbox
+                                        Plus</span></label>
+                            </div>
+                        </div>
+
+                        <p class="helper-text">The system will auto-assign the most suitable Eshopbox expert.</p>
+                        <button type="submit" id="submitBtn" class="submit-btn">Find available expert</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div id="resultCard" class="result-card hidden">
+                    <div class="success-badge"><span>✓</span><span>Live · Google Meet booking</span></div>
+                    <h2>Meeting Ready!</h2>
+                    <p class="result-subtitle">You have been matched with:</p>
+                    <div class="ae-info">
+                        <h3 id="aeName">Expert Name</h3>
+                        <p id="aeEmail">email@example.com</p>
+                    </div>
+                    <a id="aeLink" href="#" target="_blank" class="book-btn">Book Meeting Now</a>
+                </div>
+                <div id="emptyState" class="empty-state">Fill in the form to find your expert</div>
+            </div>
+        </div>
+    </main>
+
+    <div id="confirmationModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Did you book a meeting?</h2>
+            <p>Please confirm if you successfully booked</p>
+            <div class="modal-buttons">
+                <button id="confirmYesBtn" class="modal-btn confirm-btn">Yes, I booked it!</button>
+                <button id="confirmNoBtn" class="modal-btn cancel-btn">No, find another expert</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Copyright © 2025 Eshopbox Ecommerce Private Limited All Rights Reserved</p>
+    </footer>
+
+    <script>
+        const EXPERTS = {
+            LST: [
+                { name: "Divya Shukla", email: "divya.shukla@eshopbox.com", url: "https://calendar.app.google/o6CLJnxroSswBA94A" },
+                { name: "Diksha Syal", email: "diksha.syal@eshopbox.com", url: "https://calendar.app.google/m1UEgWLRygQAu9k6A" },
+                { name: "Raghwendra Kumar", email: "raghwendra.kumar@eshopbox.com", url: "https://calendar.app.google/rpGfbGbsauATqUtM7" },
+                { name: "Namita Tripathi", email: "namita.tripathi@eshopbox.com", url: "https://calendar.app.google/cdUhp7bHQ6sfvWxw6" },
+                { name: "Vinayak Shukla", email: "vinayak.shukla@eshopbox.com", url: "https://calendar.app.google/aXCfQTPi6yr9dy3q8" },
+                { name: "Shubham Kumar", email: "shubham.kumar@eshopbox.com", url: "https://calendar.app.google/kbdmKFnj34r2cwPk7" }
+            ],
+            FST: [
+                { name: "Taufeeq Ahmad", email: "taufeeq.ahmad@eshopbox.com", url: "https://calendar.app.google/zNYgBy3rhfWLcUnZ8" },
+                { name: "Ajeet Kumar", email: "ajeet.kumar@eshopbox.com", url: "https://calendar.app.google/eiT1TKhYayTaxX4R6" },
+                { name: "Sunil Sethi", email: "sunil.sethi@eshopbox.com", url: "https://calendar.app.google/XNqNjvAH9fxAymDS7" }
+            ]
+        };
+
+        document.getElementById('scheduleForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const volume = parseInt(document.querySelector('input[name="volume"]:checked').value);
+            const service = document.querySelector('input[name="service"]:checked').value;
+
+            let team = (service === 'Eshopbox Plus' || service === 'Ship') ? 'LST' : (volume < 3000 ? 'LST' : 'FST');
+            const experts = EXPERTS[team];
+            const expert = experts[Math.floor(Math.random() * experts.length)];
+
+            document.getElementById('aeName').textContent = expert.name;
+            document.getElementById('aeEmail').textContent = expert.email;
+            document.getElementById('aeLink').href = expert.url;
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('resultCard').classList.remove('hidden');
+        });
+
+        document.getElementById('aeLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            window.open(this.href, '_blank');
+            setTimeout(() => document.getElementById('confirmationModal').classList.remove('hidden'), 500);
+        });
+
+        document.getElementById('confirmYesBtn').addEventListener('click', function () {
+            alert('Booking confirmed! Page will refresh.');
+            location.reload();
+        });
+
+        document.getElementById('confirm NoBtn').addEventListener('click', function () {
+            document.getElementById('confirmationModal').classList.add('hidden');
+            document.getElementById('scheduleForm').dispatchEvent(new Event('submit'));
+        });
+
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+
+</html>
